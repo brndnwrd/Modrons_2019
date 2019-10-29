@@ -56,9 +56,11 @@ def update(dt):
                 #print(values[idx+1])
                 analog[idx] = float(values[idx+1])
 
-    #BOT_THETA = analog[3]
-    BOT_X = 100*analog[3]
-    BOT_Y = 100*analog[4]
+
+    BOT_X = analog[3]
+    BOT_Y = analog[4]
+
+    #BOT_THETA = math.atan2(BOT_Y, BOT_X)
 
     #HEAD_X = 50*math.cos(BOT_THETA)
     #HEAD_Y = 50*math.sin(BOT_THETA)
@@ -94,6 +96,10 @@ def on_key_down(key): #key names are saved in CAPS
         ser.write(b'o')
     if key.name == 'P':
         ser.write(b'p')
+    if key.name == 'Q':
+        ser.write(b'q')
+    if key.name == 'E':
+        ser.write(b'e')
 
 
 

@@ -22,8 +22,8 @@ const int PWM1channel = 0;
 #define DIR2pin 33
 const int PWM2channel = 0;
 
-#define PWM3pin 36 // TRAWLER MOTOR
-#define DIR3pin 39
+#define PWM3pin 13 // TRAWLER MOTOR
+#define DIR3pin 21
 const int PWM3channel = 0;
 
 #define LASER_1 27
@@ -73,7 +73,7 @@ void setup() {
 
   LIDAR.setTimeout(500);
   if (!LIDAR.init()) {
-    Serial.println("LIDAR 1 initialization failed");
+    //Serial.println("LIDAR 1 initialization failed");
     //while(1);
     }
   LIDAR.setDistanceMode(VL53L1X::Long);
@@ -95,16 +95,19 @@ void loop() {
     SerialBT.write(Serial.read());
   }
   if (SerialBT.available()) {
-    //Serial.write(SerialBT.read());
     
     c = SerialBT.read();
+    Serial.write(c);
 
     // LASER TOGGLE
+    //Serial.print("check");
     if(c == 'o'){
+      //Serial.println("pew");
       digitalWrite(LASER_1,HIGH);
       digitalWrite(LASER_2,HIGH);
     }
     if(c == 'p'){
+      //Serial.println("schwoop");
       digitalWrite(LASER_1, LOW);
       digitalWrite(LASER_2, LOW);
     }
@@ -127,22 +130,27 @@ void loop() {
     else if (c == 'w') { //FORWARD
       digitalWrite(DIR1pin, HIGH);
       digitalWrite(DIR2pin, HIGH);
-      for (int vfinal = 0; vfinal <= 256; vfinal += 4 ) {
-        ledcWrite(PWM1channel, vfinal);
-        ledcWrite(PWM2channel, vfinal);
-      }
+      ledcWrite(PWM1channel, 255);
+      ledcWrite(PWM2channel, 255);
+//      for (int vfinal = 0; vfinal <= 256; vfinal += 4 ) {
+//        ledcWrite(PWM1channel, vfinal);
+//        ledcWrite(PWM2channel, vfinal);
+//      }
       
     }
     else if (c == 's') { //REVERSE
       digitalWrite(DIR1pin, LOW);
       digitalWrite(DIR2pin, LOW);
-      for (int vfinal = 0; vfinal <= 256; vfinal += 4 ) {
-        ledcWrite(PWM1channel, vfinal);
-        ledcWrite(PWM2channel, vfinal);
-      }
+      ledcWrite(PWM1channel, 255);
+      ledcWrite(PWM2channel, 255);
+      
+//      for (int vfinal = 0; vfinal <= 256; vfinal += 4 ) {
+//        ledcWrite(PWM1channel, vfinal);
+//        ledcWrite(PWM2channel, vfinal);
+//      }
     }
-    else if (c == 'r'){ //RIGHT TURN
-      digitalWrite(DIR1pin,LOW);
+    else if (c == 'l'){ //RIGHT TURN
+      digitalWrite(DIR1pin, LOW);
       digitalWrite(DIR2pin, HIGH);
 
       for (int vfinal = 0; vfinal <= 256; vfinal += 4 ) {
@@ -151,7 +159,7 @@ void loop() {
       }
       
     }
-    else if (c == 'l'){ //LEFT TURN
+    else if (c == 'r'){ //LEFT TURN
       digitalWrite(DIR1pin,HIGH);
       digitalWrite(DIR2pin, LOW);
 
@@ -161,26 +169,30 @@ void loop() {
       }
     }
     else if (c == 'b') { // BRAKE
-      for (int vfinal = 256; vfinal >= 0; vfinal -= 4) {
-        ledcWrite(PWM1channel, vfinal);
-        ledcWrite(PWM2channel, vfinal);
-        ledcWrite(PWM3channel, vfinal);
-      }
+      ledcWrite(PWM1channel, 0);
+      ledcWrite(PWM2channel, 0);
+//      for (int vfinal = 256; vfinal >= 0; vfinal -= 4) {
+//        ledcWrite(PWM1channel, vfinal);
+//        ledcWrite(PWM2channel, vfinal);
+//        ledcWrite(PWM3channel, vfinal);
+//      }
       
     }
 
     // BLOCK INTAKE CONTROLS
     else if (c=='q') { // CAPTURE BLOCKS
       digitalWrite(DIR3pin, LOW);
-      for (int vfinal = 0; vfinal <= 256; vfinal += 4 ) {
-        ledcWrite(PWM3channel, vfinal);
-      }
+      ledcWrite(PWM3channel, 255);
+//      for (int vfinal = 0; vfinal <= 256; vfinal += 4 ) {
+//        ledcWrite(PWM3channel, vfinal);
+//      }
     }
     else if (c == 'e') { // EXPEL BLOCKS
       digitalWrite(DIR3pin, HIGH);
-      for (int vfinal = 0; vfinal <= 256; vfinal += 4 ) {
-        ledcWrite(PWM3channel, vfinal);
-      }
+      ledcWrite(PWM3channel, 255);
+//      for (int vfinal = 0; vfinal <= 256; vfinal += 4 ) {
+//        ledcWrite(PWM3channel, vfinal);
+//      }
     }
 
   }
@@ -198,8 +210,8 @@ void update_sensors() {
       PT_1_VOLTAGE = analogRead(A2);
       PT_2_VOLTAGE = analogRead(A3);
       checkVive();
-      BOT_X = xpos1;
-      BOT_Y = ypos1;
+      BOT_X = xpos1 + xpos2 / 2;
+      BOT_Y = ypos1 + ypos2 / 2;
 
 //      Serial.print(BOT_X);
 //      Serial.print(" ");
